@@ -14,7 +14,7 @@ from sensor import Sensor
 
 class Car:
     def __init__(self, x, y, w, h):
-        self.color = "RED"
+        self.color = "WHITE"
 
         self.x = x - w / 2
         self.y = y - h / 2
@@ -33,13 +33,16 @@ class Car:
 
         self.sensor = Sensor(self)
 
+        self.checkpoint_reached = 0
+        self.lap_count = 0
+
 
     
-    def update_position(self):
+    def update_position(self, track_mask):
         self.x += self.speed * math.sin(self.angle) # always apply self.speed to the player
         self.y -= self.speed * math.cos(self.angle) # same but for y
 
-        self.rect = self.surf.get_rect(center=(self.x, self.y))
+        self.rect = self.surf.get_rect(center = (self.x, self.y))
 
         if self.speed > self.max_speed: ## enforce a max speed
             self.speed = self.max_speed
@@ -56,7 +59,7 @@ class Car:
         if abs(self.speed) < self.friction: #special check to make sure car doesnt slowly drift away
             self.speed = 0
 
-        self.sensor.update()
+        self.sensor.update(track_mask)
 
     def draw(self, screen): 
         rotated = pygame.transform.rotozoom(self.surf, -math.degrees(self.angle), 1)
@@ -66,8 +69,21 @@ class Car:
 
     def check_for_collision(self, track_mask):
         rotated = pygame.transform.rotozoom(self.surf, -math.degrees(self.angle), 1)
-        rect = rect = rotated.get_rect(center = (self.x, self.y))
+        rect = rotated.get_rect(center = (self.x, self.y))
         car_mask = pygame.mask.from_surface(rotated)
 
         if track_mask.overlap(car_mask, rect.topleft) is not None:
             return True
+
+    def checkpoint_check(self, checkpoints):
+        for checkpoint in checkpoints:
+            if self.rect.colliderect(checkpoint.rect):
+                if checkpoint.id > self.checkpoint_reached:
+                    self.checkpoint_reached = checkpoint.id
+
+                    if self.checkpoint_reached == len(checkpoints):
+                        self.checkpoint_reached = 1
+                        self.lap_count += 1
+                        print(self.lap_count)
+
+                    print(self.checkpoint_reached)
