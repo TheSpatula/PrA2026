@@ -79,11 +79,11 @@ class Car:
         for checkpoint in checkpoints:
             if self.rect.colliderect(checkpoint.rect):
                 if checkpoint.id > self.checkpoint_reached:
-                    self.checkpoint_reached = checkpoint.id
-
-                    if self.checkpoint_reached == len(checkpoints):
+                    if self.checkpoint_reached == len(checkpoints) and self.checkpoint_reached == 1:
                         self.checkpoint_reached = 1
                         self.lap_count += 1
-                        print(self.lap_count)
+                        print(f"lap count: {self.lap_count}")
+
+                    self.checkpoint_reached = checkpoint.id
 
                     print(self.checkpoint_reached)
