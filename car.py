@@ -75,15 +75,18 @@ class Car:
         if track_mask.overlap(car_mask, rect.topleft) is not None:
             return True
 
-    def checkpoint_check(self, checkpoints):
-        for checkpoint in checkpoints:
-            if self.rect.colliderect(checkpoint.rect):
-                if checkpoint.id > self.checkpoint_reached:
-                    if self.checkpoint_reached == len(checkpoints) and self.checkpoint_reached == 1:
-                        self.checkpoint_reached = 1
-                        self.lap_count += 1
-                        print(f"lap count: {self.lap_count}")
+    def checkpoint_check(self, Checkpoint):
+        #for checkpoint in checkpoints:
+            #if self.rect.colliderect(Checkpoint.rect):
+             #   if Checkpoint.id > self.checkpoint_reached:
+#
+ #                   self.checkpoint_reached = Checkpoint.id
+#
+ #                   if self.checkpoint_reached == len(Checkpoint):
+  #                      self.checkpoint_reached = 0
+ #                       self.lap_count += 1
+ #                       #print(f"lap count: {self.lap_count}")
 
-                    self.checkpoint_reached = checkpoint.id
 
-                    print(self.checkpoint_reached)
+  #                  print(f"{self.checkpoint_reached}, {self.lap_count}")
+        pass

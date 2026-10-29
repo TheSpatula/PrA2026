@@ -1,6 +1,8 @@
+import math
 import pygame
+import random
 import sys
-#from car import Car
+from car import *
 from element import Element
 from checkpoint import Checkpoint
 
@@ -27,11 +29,10 @@ def check_for_car_collisions():
             element.car.update_position(track_mask)
             if element.car.check_for_collision(track_mask):
                 elements.pop(idx) ##TODO; we wont actually want to delete the elements, well just want to stop them from driving and give them a negative reward
-    
             element.car.checkpoint_check(checkpoints)
 
 #game loop
-def train(duration):
+def train(duration, elements):
     timer = duration
     running = True
     while running:
@@ -43,12 +44,7 @@ def train(duration):
                 running = False
 
         #handle events
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            print(pygame.mouse.get_pos())
-
         update_all_cars()
-
-        #Update all things
         check_for_car_collisions()
 
         timer -= 1
@@ -65,11 +61,47 @@ def train(duration):
 
         clock.tick(FPS)
 
+def generate_population(number_of_elements, number_of_hidden_layer_neurons):
+    elements = []
+    for i in range(number_of_elements):
+        elements.append(Element(number_of_hidden_layer_neurons))
+    return elements
+
+def generate_breeding_pool(elements):
+    breeding_pool = []
+    for element in elements:
+        fitness = (element.car.lap_count * 25) + element.car.checkpoint_reached
+        for _ in range(math.floor(fitness)):
+            breeding_pool.append(element)
+    return breeding_pool
+
+def breed_new_population(breeding_pool):
+    population = []
+    for _ in range(N):
+        parent1 = random.choice(breeding_pool)
+        parent2 = random.choice(breeding_pool)
+        population.append(parent1.breed(parent2, HIDDEN_LAYER_NEURONS))
+    return population
+
+def mutate_population(elements):
+    for element in elements:
+        element.mutation_chance(element.input_weights)
+        element.mutation_chance(element.input_biases)
+        element.mutation_chance(element.hidden_layer1_weights)
+        element.mutation_chance(element.hidden_layer1_biases)
+        element.mutation_chance(element.hidden_layer2_weights)
+        element.mutation_chance(element.hidden_layer2_biases)
+
+pygame.init()
+
 
 WIDTH, HEIGHT = 1080, 720
 MOVEMENT_SPEED = 10
 TURNING_POWER = 2.5 #lower value == More turning power
 FPS = 60
+HIDDEN_LAYER_NEURONS = 15
+N = 100
+STEPS = 1000
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT), vsync = 1)
 pygame.display.set_caption("GameTest")
@@ -88,12 +120,12 @@ checkpoints = [Checkpoint(15, 381, 120, 20, 1), Checkpoint(4, 229, 120, 20, 2), 
 
 clock = pygame.time.Clock()
 
-elements = []
+elements = generate_population(N, HIDDEN_LAYER_NEURONS)
 
-for i in range(300):
-    elements.append(Element(12))
+for _ in range(15):
+    train(STEPS, elements)
+    breeding_pool = generate_breeding_pool(elements)
+    elements = breed_new_population(breeding_pool)
 
-train(3500)
 
 pygame.quit()
-sys.exit()
