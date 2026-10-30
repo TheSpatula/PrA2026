@@ -10,6 +10,8 @@ pygame.init()
 
 def update_all_cars():
     for element in elements:
+            if not element.car.is_alive: # skip frozen/dead cars
+                continue
             match element.choose_game_iput():
                 case 0: #forward
                     element.car.speed += element.car.acceleration
@@ -25,13 +27,19 @@ def update_all_cars():
                     element.car.angle += 0.03 * element.car.speed / TURNING_POWER
 
 def check_for_car_collisions():
-    for element in elements[:]:
-            element.car.update_position(track_mask)
-
-            element.car.steps_without_progress += 1
+    for element in elements:
+        #when it is already dead, skip it (dead here means its frozen)
+        if not element.car.is_alive:
+            continue
             
-            if element.car.check_for_collision(track_mask) or element.car.steps_without_progress > 300: #collision with wall or lazy ass :skull:
-                elements.remove(element)
+        element.car.update_position(track_mask)
+        element.car.steps_without_progress += 1
+        
+        #freez on collision or timer
+        if element.car.check_for_collision(track_mask) or element.car.steps_without_progress > 300:
+            element.car.is_alive = False
+            element.car.speed = 0  #freez instead of deleate, so we can breed them
+        else:
             element.car.checkpoint_check(checkpoints)
 
 #game loop
@@ -44,11 +52,15 @@ def train(duration, elements):
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                pygame.quit()
+                sys.exit()
 
         #handle events
         update_all_cars()
         check_for_car_collisions()
+
+        if all(not element.car.is_alive for element in elements):
+            running = False
 
         timer -= 1
         print(timer)
@@ -59,7 +71,8 @@ def train(duration, elements):
             checkpoint.draw(screen)
         screen.blit(track, (0, 0))
         for element in elements:
-            element.car.draw(screen)
+            if element.car.is_alive: #only draw alive cars
+                element.car.draw(screen)
         pygame.display.flip()
 
         clock.tick(FPS)
@@ -108,7 +121,7 @@ MOVEMENT_SPEED = 10
 TURNING_POWER = 2.5 #lower value == More turning power
 FPS = 60
 HIDDEN_LAYER_NEURONS = 15
-N = 100
+N = 900
 STEPS = 1000
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT), vsync = 1)
@@ -137,3 +150,4 @@ for _ in range(15):
 
 
 pygame.quit()
+sys.exit()

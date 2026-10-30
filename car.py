@@ -39,6 +39,7 @@ class Car:
         self.lap_count = 0
 
         self.steps_without_progress = 0 #time passed without progressing one checkpoint
+        self.is_alive = True
 
 
     

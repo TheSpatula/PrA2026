@@ -6,7 +6,7 @@ class Sensor:
     def __init__(self, car):
         self.car = car
         self.ray_count = 7
-        self.ray_length = 100
+        self.ray_length = 250
         self.ray_spread = math.pi
 
         self.rays = []
