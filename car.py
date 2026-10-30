@@ -22,7 +22,9 @@ class Car:
         self.h = h
         self.surf = pygame.Surface((self.w, self.h), pygame.SRCALPHA)
         self.surf.fill(self.color)
-        self.rect = [self.x, self.y, self.w, self.h]
+        
+        #self.rect = [self.x, self.y, self.w, self.h] gewechselt zu:
+        self.rect = self.surf.get_rect(center = (self.x, self.y))
 
         self.speed = 0
         self.acceleration = 0.2
@@ -35,6 +37,8 @@ class Car:
 
         self.checkpoint_reached = 0
         self.lap_count = 0
+
+        self.steps_without_progress = 0 #time passed without progressing one checkpoint
 
 
     
@@ -75,18 +79,14 @@ class Car:
         if track_mask.overlap(car_mask, rect.topleft) is not None:
             return True
 
-    def checkpoint_check(self, Checkpoint):
-        #for checkpoint in checkpoints:
-            #if self.rect.colliderect(Checkpoint.rect):
-             #   if Checkpoint.id > self.checkpoint_reached:
-#
- #                   self.checkpoint_reached = Checkpoint.id
-#
- #                   if self.checkpoint_reached == len(Checkpoint):
-  #                      self.checkpoint_reached = 0
- #                       self.lap_count += 1
- #                       #print(f"lap count: {self.lap_count}")
-
-
-  #                  print(f"{self.checkpoint_reached}, {self.lap_count}")
-        pass
+    def checkpoint_check(self, checkpoints):
+        for checkpoint in checkpoints:
+            if self.rect.colliderect(checkpoint.rect):
+                if checkpoint.id == 1 and self.checkpoint_reached == len(checkpoints):
+                    self.lap_count += 1
+                    self.checkpoint_reached = 1
+                    self.steps_without_progress = 0 #reset
+                    print(f"lap count: {self.lap_count}")
+                elif checkpoint.id == self.checkpoint_reached + 1:
+                    self.checkpoint_reached = checkpoint.id
+                    self.steps_without_progress = 0

@@ -25,10 +25,13 @@ def update_all_cars():
                     element.car.angle += 0.03 * element.car.speed / TURNING_POWER
 
 def check_for_car_collisions():
-    for idx, element in enumerate(elements):
+    for element in elements[:]:
             element.car.update_position(track_mask)
-            if element.car.check_for_collision(track_mask):
-                elements.pop(idx) ##TODO; we wont actually want to delete the elements, well just want to stop them from driving and give them a negative reward
+
+            element.car.steps_without_progress += 1
+            
+            if element.car.check_for_collision(track_mask) or element.car.steps_without_progress > 300: #collision with wall or lazy ass :skull:
+                elements.remove(element)
             element.car.checkpoint_check(checkpoints)
 
 #game loop
@@ -71,8 +74,13 @@ def generate_breeding_pool(elements):
     breeding_pool = []
     for element in elements:
         fitness = (element.car.lap_count * 25) + element.car.checkpoint_reached
-        for _ in range(math.floor(fitness)):
-            breeding_pool.append(element)
+        if fitness > 0: #does not take cars which didnt move into breeding pool
+            for _ in range(math.floor(max(0, fitness))):
+                breeding_pool.append(element)
+
+    if not breeding_pool:
+        breeding_pool = generate_population(N, HIDDEN_LAYER_NEURONS) #if no car survived the STEPS, then no car would have good enough weights to even start training --> make new population
+
     return breeding_pool
 
 def breed_new_population(breeding_pool):
