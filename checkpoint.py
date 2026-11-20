@@ -1,5 +1,4 @@
 import pygame
-import numpy
 
 class Checkpoint:
     def __init__(self, x, y, w, h, id):

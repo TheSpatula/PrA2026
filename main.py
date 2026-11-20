@@ -1,9 +1,9 @@
 import math
-import pygame
 import random
+import pygame
 import sys
 from car import *
-from element import Element
+from element import Element, mutation_chance
 from checkpoint import Checkpoint
 
 pygame.init()
@@ -12,7 +12,7 @@ def update_all_cars():
     for element in elements:
             if not element.car.is_alive: # skip frozen/dead cars
                 continue
-            match element.choose_game_iput():
+            match element.choose_game_input():
                 case 0: #forward
                     element.car.speed += element.car.acceleration
                 case 1: #forward-left
@@ -63,7 +63,6 @@ def train(duration, elements):
             running = False
 
         timer -= 1
-        print(timer)
 
         #RENDER
         screen.fill(("BLACK"))
@@ -106,18 +105,14 @@ def breed_new_population(breeding_pool):
 
 def mutate_population(elements):
     for element in elements:
-        element.mutation_chance(element.input_weights)
-        element.mutation_chance(element.input_biases)
-        element.mutation_chance(element.hidden_layer1_weights)
-        element.mutation_chance(element.hidden_layer1_biases)
-        element.mutation_chance(element.hidden_layer2_weights)
-        element.mutation_chance(element.hidden_layer2_biases)
-
-pygame.init()
-
+        mutation_chance(element.input_weights)
+        mutation_chance(element.input_biases)
+        mutation_chance(element.hidden_layer1_weights)
+        mutation_chance(element.hidden_layer1_biases)
+        mutation_chance(element.hidden_layer2_weights)
+        mutation_chance(element.hidden_layer2_biases)
 
 WIDTH, HEIGHT = 1080, 720
-MOVEMENT_SPEED = 10
 TURNING_POWER = 2.5 #lower value == More turning power
 FPS = 60
 HIDDEN_LAYER_NEURONS = 15

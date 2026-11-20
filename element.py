@@ -1,6 +1,4 @@
-import pygame
 import numpy as np
-import math
 import random
 from car import Car
 
@@ -21,16 +19,16 @@ def mutation_chance(weights):
                 weights[i][j] += random.uniform(-0.05, 0.05)
 
 class Element:
-    def __init__(self, n_of_hidden_layer_neruons):
+    def __init__(self, n_of_hidden_layer_neurons):
         self.car = Car(50, 479, 15, 30)
 
-        self.input_weights = (0.10 * np.random.randn(self.car.sensor.ray_count, n_of_hidden_layer_neruons))
-        self.input_biases = np.full((1, n_of_hidden_layer_neruons), random.uniform(0.01, 0.1))
+        self.input_weights = (0.10 * np.random.randn(self.car.sensor.ray_count, n_of_hidden_layer_neurons))
+        self.input_biases = np.full((1, n_of_hidden_layer_neurons), random.uniform(0.01, 0.1))
 
-        self.hidden_layer1_weights = (0.10 * np.random.randn(n_of_hidden_layer_neruons, n_of_hidden_layer_neruons))
-        self.hidden_layer1_biases = np.full((1, n_of_hidden_layer_neruons), random.uniform(0.01, 0.1))
+        self.hidden_layer1_weights = (0.10 * np.random.randn(n_of_hidden_layer_neurons, n_of_hidden_layer_neurons))
+        self.hidden_layer1_biases = np.full((1, n_of_hidden_layer_neurons), random.uniform(0.01, 0.1))
 
-        self.hidden_layer2_weights = (0.10 * np.random.randn(n_of_hidden_layer_neruons, 5))
+        self.hidden_layer2_weights = (0.10 * np.random.randn(n_of_hidden_layer_neurons, 5))
         self.hidden_layer2_biases = np.full((1, 5), random.uniform(0.01, 0.1))
 
     def feed_forward(self, inputs, weights, biases):
@@ -40,7 +38,7 @@ class Element:
     def activation_ReLU(self, inputs):
         self.output = np.maximum(0, inputs) ## just drop any negative values
 
-    def choose_game_iput(self):
+    def choose_game_input(self):
         if len(self.car.sensor.readings) != self.car.sensor.ray_count:
             return 0 ## sensor hasnt cast rays yet (first frame), just drive forward
         

@@ -2,16 +2,6 @@ import pygame
 import math
 from sensor import Sensor
 
-#class Controls:
-#    def __init__(self):
-#        self.forward = False
-#        self.left = False
-#        self.right = False
-#        self.reverse = False
-
-
-#x and y pas every update by doing something like x += x * cos(theta) * 0.001
-
 class Car:
     def __init__(self, x, y, w, h):
         self.color = "WHITE"
@@ -23,7 +13,6 @@ class Car:
         self.surf = pygame.Surface((self.w, self.h), pygame.SRCALPHA)
         self.surf.fill(self.color)
         
-        #self.rect = [self.x, self.y, self.w, self.h] gewechselt zu:
         self.rect = self.surf.get_rect(center = (self.x, self.y))
 
         self.speed = 0
