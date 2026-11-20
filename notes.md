@@ -42,3 +42,10 @@ implement :
                 breeding_pool = generate_population(N, HIDDEN_LAYER_NEURONS)
                 
             return breeding_pool
+
+
+
+
+TODO: 
+    a way to keep the best element after the entire simulatuion finished, so we can let it race against the student car
+    

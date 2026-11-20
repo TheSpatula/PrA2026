@@ -56,7 +56,7 @@ def train(duration, elements):
                 sys.exit()
 
         #handle events
-        update_all_cars()
+        update_all_cars() #GameLoop
         check_for_car_collisions()
 
         if all(not element.car.is_alive for element in elements):
@@ -79,7 +79,7 @@ def train(duration, elements):
 
 def generate_population(number_of_elements, number_of_hidden_layer_neurons):
     elements = []
-    for i in range(number_of_elements):
+    for _ in range(number_of_elements):
         elements.append(Element(number_of_hidden_layer_neurons))
     return elements
 
@@ -121,7 +121,7 @@ MOVEMENT_SPEED = 10
 TURNING_POWER = 2.5 #lower value == More turning power
 FPS = 60
 HIDDEN_LAYER_NEURONS = 15
-N = 900
+N = 300
 STEPS = 1000
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT), vsync = 1)
