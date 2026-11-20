@@ -115,14 +115,16 @@ def mutate_population(elements):
 WIDTH, HEIGHT = 1080, 720
 TURNING_POWER = 2.5 #lower value == More turning power
 FPS = 60
-HIDDEN_LAYER_NEURONS = 15
 N = 300
 STEPS = 1000
 
-screen = pygame.display.set_mode((WIDTH, HEIGHT), vsync = 1)
-pygame.display.set_caption("GameTest")
+HIDDEN_LAYER_NEURONS = 15
 
-track = pygame.image.load("assets/RaceTrack.png").convert_alpha()
+
+screen = pygame.display.set_mode((WIDTH, HEIGHT), vsync = 1)
+pygame.display.set_caption("Simulation")
+
+track = pygame.image.load("assets/RaceTrack1.png").convert_alpha()
 track_mask = pygame.mask.from_surface(track)
 
 checkpoints = [Checkpoint(15, 381, 120, 20, 1), Checkpoint(4, 229, 120, 20, 2), Checkpoint(204, 20, 20, 120, 3), Checkpoint(437, 14, 20, 120, 4),
@@ -142,6 +144,7 @@ for _ in range(15):
     train(STEPS, elements)
     breeding_pool = generate_breeding_pool(elements)
     elements = breed_new_population(breeding_pool)
+    mutate_population(elements)
 
 
 pygame.quit()
